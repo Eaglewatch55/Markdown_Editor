@@ -49,6 +49,34 @@ def inline_format():
     return to_return
 
 
+def listed(ordered: bool):
+    def row_formatting(rows, order):
+        formatted = []
+        if order:
+            for j, row in enumerate(rows):
+                formatted.append(f"{j + 1}. {row}")
+        else:
+            for row in rows:
+                formatted.append(f"* {row}")
+
+        return "\n".join(formatted) + "\n"
+
+    while True:
+        n = int(input("Number of rows: "))
+        if n < 1:
+            print("The number of rows should be greater than zero")
+            continue
+        else:
+            break
+
+    r = []
+
+    for i in range(n):
+        r.append(input(f"Row #{i + 1}: "))
+
+    return row_formatting(r, ordered)
+
+
 def new_line():
     return "\n"
 
@@ -59,6 +87,8 @@ formatters = {"plain": plain_format,
               "header": header_format,
               "link": link,
               "inline-code": inline_format,
+              "ordered-list": (listed, True),
+              "unordered-list": (listed, False),
               "new-line": new_line}
 
 
@@ -70,7 +100,7 @@ while not done:
     select_format = input("Choose a formatter: ")
 
     if select_format == "!help":
-        print("Available formatters: plain bold italic header link inline-code new-line")
+        print("Available formatters: plain bold italic header link inline-code ordered-list unordered-list new-line")
         print("Special commands: !help !done")
         continue
 
@@ -78,7 +108,11 @@ while not done:
         exit()
 
     if select_format in formatters.keys():
-        to_print.append(formatters[select_format]())
+        try:
+            to_print.append(formatters[select_format]())
+        except TypeError:
+            to_print.append(formatters[select_format][0](formatters[select_format][1]))
+
         print("".join(to_print))
 
     else:
