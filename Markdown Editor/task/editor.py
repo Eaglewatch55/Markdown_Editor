@@ -105,6 +105,9 @@ while not done:
         continue
 
     elif select_format == "!done":
+        f = open("output.md", "w")
+        f.write("".join(to_print))
+        f.close()
         exit()
 
     if select_format in formatters.keys():
